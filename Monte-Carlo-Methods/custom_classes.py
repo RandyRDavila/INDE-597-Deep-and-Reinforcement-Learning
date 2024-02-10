@@ -80,3 +80,16 @@ class CustomBlackjackEnv(BlackjackEnv):
             return {11: 'Jack', 12: 'Queen', 13: 'King'}[card]
         else:
             return str(card)
+
+
+class Policy:
+    def __init__(self, env, mapping):
+        self.actions = [action for action in env.action_space]
+        self.mapping = mapping
+
+
+    def __call__(self, state):
+        return np.random.choice(self.actions, p=self.mapping[state])
+
+    def prob(self, state, action):
+        return self.mapping[state][action]
