@@ -62,7 +62,7 @@ class CustomBlackjackEnv(BlackjackEnv):
         return self._get_obs()
 
     def step(self, action):
-        next_state, reward, terminated, _, _  = super().step(action)
+        next_state, reward, terminated, _  = super().step(action)
         return next_state, reward, terminated
 
     def render(self, show_dealer_hand=False):
@@ -82,14 +82,46 @@ class CustomBlackjackEnv(BlackjackEnv):
             return str(card)
 
 
-class Policy:
+class DeterministicPolicy:
     def __init__(self, env, mapping):
         self.actions = [action for action in env.action_space]
         self.mapping = mapping
 
+    def __call__(self, state):
+        return self.mapping[state]
+
+    def prob(self, state, action):
+        return 1.0 if self.mapping[state] == action else 0.0
+
+class RandomPolicy:
+    def __init__(self, env, mapping=None):
+        self.actions = [action for action in env.action_space]
+        self.mapping = mapping
+
+    def __call__(self, state):
+        return np.random.choice(self.actions)
+
+    def prob(self, state, action):
+        return 1/len(self.actions)
+
+class SoftPolicy:
+    def __init__(self, env, mapping):
+        self.actions = [action for action in env.action_space]
+        self.mapping = mapping
 
     def __call__(self, state):
         return np.random.choice(self.actions, p=self.mapping[state])
+
+    def prob(self, state, action):
+        return self.mapping[state][action]
+
+class GreedyPolicy:
+    def __init__(self, env, mapping):
+        self.actions = [action for action in env.action_space]
+        self.mapping = mapping
+
+    def __call__(self, state):
+        return np.argmax([self.mapping[state]])
 
     def prob(self, state, action):
         return self.mapping[state][action]
