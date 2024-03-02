@@ -1,7 +1,18 @@
 from board_classes import Player, Agent
 from policies import random_policy
+import numpy as np
 
-def play_random_game(board, render=False):
+def play_random_game(board:np.ndarray, render=False) -> None:
+    """
+    Play a random game on the board.
+
+    Args:
+    board: np.ndarray
+    render: bool
+
+    Returns:
+    None
+    """
     # Reset the board to begin the game.
     board.reset()
 
