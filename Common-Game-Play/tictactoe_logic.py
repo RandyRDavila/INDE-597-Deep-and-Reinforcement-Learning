@@ -62,13 +62,21 @@ def tictactoe_render(board):
                 rendered_board[ii, jj] = "O"
     print(tabulate(rendered_board, tablefmt="fancy_grid"))
 
+def tictactoe_winner(board):
+    if tictactoe_win(board, Player.A):
+        return Player.A
+    elif tictactoe_win(board, Player.B):
+        return Player.B
+    else:
+        return Player.none
+
 # Each value is a function expressing the logic of TicTacToe.
 tictactoe_logic = {
     "game_over" : tictactoe_done,
     "draw" : tictactoe_draw,
     "valid_moves" : tictactoe_board_valid_moves,
-    "win_on_move" : tictactoe_win,
     "play" : tictactoe_play_logic,
     "board" : np.zeros((3, 3)),
-    "render" : tictactoe_render
+    "render" : tictactoe_render,
+    "winner" : tictactoe_winner,
 }

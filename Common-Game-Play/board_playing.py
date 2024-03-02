@@ -1,34 +1,54 @@
-import random
-from board_classes import Player
+from board_classes import Player, Agent
+from policies import random_policy
 
-class Agent:
-    def __init__(self, player, policy):
-        self.player = player
-        self.policy = policy
+def play_random_game(board, render=False):
+    # Reset the board to begin the game.
+    board.reset()
 
-    def __call__(self, board):
-        return self.policy(board, self.player)
+    # Render the board if requested.
+    if render:
+        board.render()
 
-def random_policy(board, player):
-    valid_moves = board.valid_moves(player)
-    return random.choice(valid_moves)
+    # Define the two agents.
+    agentA = Agent(Player.A, random_policy)
+    agentB = Agent(Player.B, random_policy)
 
-
-def play_game(board, render=False):
-    _, done = board.reset()
-
+    # Play the game.
     while True:
-        valid_moves = board.valid_moves(player=Player.A)
-        move = random.choice(valid_moves)
-        board(Player.A, move)
+        # Agent A plays first.
+        move = agentA(board)
+
+        # Agent A plays the move.
+        board(agentA.player, move)
+
+        # Render the board if requested.
         if render:
             board.render()
+
+        # Check if the game is over.
         if board.game_over():
-            break
-        valid_moves = board.valid_moves(player=Player.B)
-        move = random.choice(valid_moves)
-        board(Player.B, move)
+            print("Game Over")
+            if board.winner() == Player.none:
+                print("Draw")
+            else:
+                print("Winner: ", board.winner())
+            return None
+
+        # Agent B plays second.
+        move = agentB(board)
+
+        # Agent B plays the move.
+        board(agentB.player, move)
+
+        # Render the board if requested.
         if render:
             board.render()
+
+        # Check if the game is over.
         if board.game_over():
-            break
+            print("Game Over")
+            if board.winner() == Player.none:
+                print("Draw")
+            else:
+                print("Winner: ", board.winner())
+            return None
